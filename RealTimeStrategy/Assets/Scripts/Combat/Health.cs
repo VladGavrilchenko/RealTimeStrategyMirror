@@ -8,10 +8,11 @@ public class Health : NetworkBehaviour
 {
     [SerializeField] private int maxHealth;
 
-    [SyncVar]
+    [SyncVar(hook = nameof(HandleHealthUpdate))]
     private int currentHealth;
 
-    public Action ServerOnDie;
+    public event Action ServerOnDie;
+    public event Action<int, int> ClientOnHealthUpdated;
 
 
     #region Server
@@ -31,12 +32,14 @@ public class Health : NetworkBehaviour
         if(currentHealth != 0 ) { return; }
 
         ServerOnDie?.Invoke();
-
-        Debug.Log("Die");
     }
     #endregion
 
     #region Client
 
+    private void HandleHealthUpdate(int oldHealth , int newHealth)
+    {
+        ClientOnHealthUpdated?.Invoke(newHealth , maxHealth);
+    }
     #endregion
 }

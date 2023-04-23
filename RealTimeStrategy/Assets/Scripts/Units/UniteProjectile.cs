@@ -29,6 +29,7 @@ public class UniteProjectile : NetworkBehaviour
     [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
+
         if(other.TryGetComponent<NetworkIdentity>(out NetworkIdentity identity))
         {
             if(identity.connectionToClient == connectionToClient) { return; }
@@ -37,6 +38,11 @@ public class UniteProjectile : NetworkBehaviour
         if(other.TryGetComponent<Health>(out Health health))
         {
             health.DealDamage(damageToDeal);
+        }
+
+        if (other.GetComponent<UniteProjectile>() != null)
+        {
+            return;
         }
 
         DestroySelf();
